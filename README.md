@@ -1,2 +1,0 @@
-# drinkhub
-drink store
