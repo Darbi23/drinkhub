@@ -1,9 +1,8 @@
 package com.drinkhub.service;
 
-import com.drinkhub.model.Product;
+import com.drinkhub.model.entity.Product;
 import com.drinkhub.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,9 +1,8 @@
 package com.drinkhub.controller;
 
-import com.drinkhub.model.User;
+import com.drinkhub.model.entity.User;
 import com.drinkhub.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

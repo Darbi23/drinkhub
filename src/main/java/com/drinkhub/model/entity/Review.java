@@ -1,5 +1,6 @@
-package com.drinkhub.model;
+package com.drinkhub.model.entity;
 
+import com.drinkhub.model.entity.Product;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;

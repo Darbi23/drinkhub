@@ -1,4 +1,4 @@
 package com.drinkhub.model.entity;
 
-public class ShoppingCart {
+public class Cart {
 }

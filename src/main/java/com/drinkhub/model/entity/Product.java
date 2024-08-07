@@ -1,4 +1,4 @@
-package com.drinkhub.model;
+package com.drinkhub.model.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

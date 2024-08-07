@@ -1,6 +1,6 @@
 package com.drinkhub.repository;
 
-import com.drinkhub.model.Product;
+import com.drinkhub.model.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

@@ -1,5 +1,6 @@
-package com.drinkhub.model;
+package com.drinkhub.model.entity;
 
+import com.drinkhub.model.entity.Role;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -17,7 +18,7 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private Roles roles;
+    private Role role;
 
 
 }
