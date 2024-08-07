@@ -1,4 +1,4 @@
-package com.drinkhub.drinkhub;
+package com.drinkhub;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

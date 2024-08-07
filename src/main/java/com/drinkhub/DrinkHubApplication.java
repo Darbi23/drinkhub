@@ -1,13 +1,13 @@
-package com.drinkhub.drinkhub;
+package com.drinkhub;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DrinkhubApplication {
+public class DrinkHubApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DrinkhubApplication.class, args);
+		SpringApplication.run(DrinkHubApplication.class, args);
 	}
 
 }
