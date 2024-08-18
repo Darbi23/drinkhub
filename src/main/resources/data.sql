@@ -1,6 +1,5 @@
 INSERT INTO app_user (username, password, email, roles) VALUES
-('john_doe', 'password123', 'john@example.com', 'USER'),
-('admin', 'admin123', 'admin@example.com', 'ADMIN');
+('admin', '$2a$10$QFNM01X3j6f7dGUpkN8C1uJynKshr.UzYwOyfeor7RBb9v9YNg6fq', 'admin@example.com', 'ADMIN');
 
 INSERT INTO product (name, description, price, category) VALUES
 ('Whiskey A', 'A fine whiskey', 50.0, 'Whiskey'),

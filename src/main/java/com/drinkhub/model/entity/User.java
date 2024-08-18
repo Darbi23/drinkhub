@@ -10,6 +10,7 @@ import lombok.Setter;
 @Data
 @Getter
 @Setter
+@Table(name = "app_user")
 public class User {
 
     @Id
@@ -18,6 +19,7 @@ public class User {
     private String username;
     private String password;
     private String email;
+    @Enumerated(EnumType.STRING)
     private Role role;
 
 

@@ -1,10 +1,7 @@
 package com.drinkhub.model.entity;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +13,7 @@ import java.util.List;
 @Data
 @Getter
 @Setter
+@Table(name = "customer_order")
 public class Order {
 
     @Id

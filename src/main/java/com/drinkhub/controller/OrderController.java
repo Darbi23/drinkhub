@@ -5,6 +5,7 @@ import com.drinkhub.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.PublicKey;
 import java.util.List;
 
 @RestController
@@ -14,8 +15,10 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @GetMapping
-    public List<Order> getAllOrders(@RequestParam String status, @RequestParam Long userId) {
+    @GetMapping("")
+    public List<Order> getAllOrdersByUserId(
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) Long userId) {
         return orderService.findAll(status, userId);
     }
     // წამოიღოს კონკრეტული იუზერის ორდერები და არა ყველა
