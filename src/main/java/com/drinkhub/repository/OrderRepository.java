@@ -21,7 +21,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByOrderDateBetween(Date startDate, Date endDate);
 
     // Custom query to find orders by userId and status
-    @Query("SELECT o FROM Order o WHERE o.userId = :userId AND o.status = :status")
+    @Query("SELECT o FROM Order o WHERE o.user.id = :userId AND o.status = :status")
     List<Order> findOrdersByUserAndStatus(
             @Param("userId") Long userId,
             @Param("status") String status);

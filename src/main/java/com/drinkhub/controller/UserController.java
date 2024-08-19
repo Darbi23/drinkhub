@@ -1,6 +1,7 @@
 package com.drinkhub.controller;
 
 import com.drinkhub.model.dto.LoginDto;
+import com.drinkhub.model.dto.UserDto;
 import com.drinkhub.model.entity.User;
 import com.drinkhub.service.UserService;
 import com.drinkhub.utils.JwtUtil;
@@ -20,15 +21,30 @@ public class UserController {
         return userService.login(loginDto);
     }
 
+//    @PostMapping("/register")
+//    public User register(@RequestBody User user) {
+//        // Encode the user's password before saving
+////        user.setPassword(passwordEncoder.encode(user.getPassword()));
+//        return userService.save(user);
+//    }
+
     @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        // Encode the user's password before saving
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userService.save(user);
+    public UserDto registerUser(@RequestBody UserDto userDto) {
+        return userService.registerUser(userDto);
     }
 
     @GetMapping("/{username}")
-    public User getUser(@PathVariable String username) {
-        return userService.findByUsername(username);
+    public UserDto getUserProfile(@PathVariable String username) {
+        return userService.getUserProfile(username);
+    }
+
+    @PutMapping("/{username}")
+    public UserDto updateUserProfile(@PathVariable String username, @RequestBody UserDto userDto) {
+        return userService.updateUserProfile(username, userDto);
+    }
+
+    @DeleteMapping("/{username}")
+    public void deleteUser(@PathVariable String username) {
+        userService.deleteUser(username);
     }
 }

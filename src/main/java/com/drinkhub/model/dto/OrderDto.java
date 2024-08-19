@@ -1,15 +1,7 @@
 package com.drinkhub.model.dto;
 
-import java.util.Date;
 import java.util.List;
 
-public class    OrderDto {
-    private Long id;
-    private Long userId;
-    private double totalAmount;
-    private Date orderDate;
-    private String status;
-    private List<Long> productIds;
+public record OrderDto(Long id, Long userId, List<Long> productIds, Double totalAmount, String status) {
 
-    // Getters and Setters
 }

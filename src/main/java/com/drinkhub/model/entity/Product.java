@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 @Getter
 @Setter
+@Table(name = "products")
 public class Product {
 
     @Id
@@ -18,8 +19,9 @@ public class Product {
     private Long id;
     private String name;
     private String description;
-    private double price;
+    private Double price;
     private String category;
+    private Integer stock;
     @OneToMany(mappedBy = "product")
     private List<Review> reviews;
 
