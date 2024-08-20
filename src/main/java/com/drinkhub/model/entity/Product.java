@@ -22,6 +22,7 @@ public class Product {
     private Double price;
     private String category;
     private Integer stock;
+
     @OneToMany(mappedBy = "product")
     private List<Review> reviews;
 
