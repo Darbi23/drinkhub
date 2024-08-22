@@ -1,5 +1,17 @@
 package com.drinkhub.model.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
-public record CartDto(Long id, Long userId, List<CartItemDto> items, Double totalAmount) {}
+@Getter
+@Setter
+@AllArgsConstructor
+public class CartDto {
+    private Long id;
+    private Long userId;
+    private List<CartItemDto> items;
+    private Double totalAmount;
+}

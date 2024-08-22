@@ -4,6 +4,7 @@ package com.drinkhub.model.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
@@ -13,6 +14,7 @@ import java.util.List;
 @Data
 @Getter
 @Setter
+@NoArgsConstructor
 @Table(name = "customer_order")
 public class Order {
 
@@ -36,7 +38,12 @@ public class Order {
     private Date orderDate;
     private String status;
 
-    public Order() {
+    public Order(Long id, User user, List<Product> productList, Double totalAmount, String status) {
+        this.id = id;
+        this.user = user;
+        this.productList = productList;
+        this.totalAmount = totalAmount;
+        this.status = status;
+        this.orderDate = new Date(); // Assuming you want to set order date to the current date
     }
-
 }

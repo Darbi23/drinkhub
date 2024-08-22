@@ -4,23 +4,52 @@ import com.drinkhub.model.dto.CartDto;
 import com.drinkhub.model.dto.CartItemDto;
 import com.drinkhub.model.entity.Cart;
 import com.drinkhub.model.entity.CartItem;
-import org.mapstruct.Mapper;
+import com.drinkhub.model.entity.Product;
+import com.drinkhub.repository.ProductRepository;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.Mapping;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
-public interface CartMapper {
+@Component
+public class CartMapper {
 
-    CartDto toDto(Cart cart);
+    private final ProductRepository productRepository;
 
-    CartItem toEntity(CartItemDto cartItemDto);
+    public CartMapper(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
-    List<CartItemDto> toDtoList(List<CartItem> items);
+    public CartDto toDto(Cart cart) {
+        List<CartItemDto> items = cart.getItems().stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+        return new CartDto(cart.getId(), cart.getUser().getId(), items, cart.calculateTotal());
+    }
 
-    CartItemDto toDto(CartItem cartItem);
+    public CartItem toEntity(CartItemDto cartItemDto) {
+        Product product = productRepository.getReferenceById(cartItemDto.getProductId());
+        CartItem cartItem = new CartItem();
+        cartItem.setProduct(product);
+        cartItem.setQuantity(cartItemDto.getQuantity());
 
-    @Mapping(target = "id", ignore = true)
-    void updateEntityFromDto(CartItemDto dto, @MappingTarget CartItem entity);
+        return cartItem;
+    }
+
+
+    public CartItemDto toDto(CartItem cartItem) {
+        return new CartItemDto(
+                cartItem.getId(),
+                cartItem.getProduct().getId(),
+                cartItem.getProduct().getName(),
+                cartItem.getPrice(),
+                cartItem.getQuantity()
+        );
+    }
+
+    public void updateEntityFromDto(CartItemDto dto, CartItem entity) {
+        entity.setQuantity(dto.getQuantity());
+    }
+
 }

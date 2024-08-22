@@ -37,6 +37,8 @@ public class ProductController {
         return productService.updateProduct(id, productDto);
     }
 
+
+    //TODO არ მუშაობს სექურითი პრობლემაა
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);

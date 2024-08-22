@@ -2,22 +2,38 @@ package com.drinkhub.model.mapper;
 
 import com.drinkhub.model.dto.ProductDto;
 import com.drinkhub.model.entity.Product;
-import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Mapping;
+import org.springframework.stereotype.Component;
 
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
-public interface ProductMapper {
+@Component
+public class ProductMapper {
 
-    ProductDto toDto(Product product);
+    public ProductDto toDto(Product product) {
+        return new ProductDto(product.getId(), product.getName(), product.getDescription(),  product.getPrice(), product.getCategory(), product.getStock());
+    }
 
-    Product toEntity(ProductDto productDto);
+    public Product toEntity(ProductDto productDto) {
+        return new Product(productDto.getId(), productDto.getName(), productDto.getDescription(), productDto.getPrice(), productDto.getCategory(),  productDto.getStock());
 
-    List<ProductDto> toDtoList(List<Product> products);
+    }
 
-    @Mapping(target = "id", ignore = true)
-    void updateEntityFromDto(ProductDto dto, @MappingTarget Product entity);
+    public void updateEntityFromDto(ProductDto productDto, Product existingProduct) {
+        existingProduct.setName(productDto.getName());
+        existingProduct.setDescription(productDto.getDescription());
+        existingProduct.setCategory(productDto.getCategory());
+        existingProduct.setPrice(productDto.getPrice());
+        existingProduct.setStock(productDto.getStock());
+    }
+
+    public List<ProductDto> toDtoList(List<Product> products) {
+        return products.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
 }

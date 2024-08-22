@@ -1,3 +1,18 @@
 package com.drinkhub.model.dto;
 
-public record CartItemDto(Long id, Long productId, String productName, Double price, Integer quantity) {}
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+
+@Getter
+@Setter
+@AllArgsConstructor
+public class CartItemDto {
+
+    private Long id;
+    private Long productId;
+    private String productName;
+    private Double price;
+    private Integer quantity;
+}

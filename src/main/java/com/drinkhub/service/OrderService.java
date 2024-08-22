@@ -39,8 +39,8 @@ public class OrderService {
 
     public OrderDto placeOrder(OrderDto orderDto) {
         Order order = orderMapper.toEntity(orderDto);
-        User user = userRepository.findById(orderDto.userId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + orderDto.userId()));
+        User user = userRepository.findById(orderDto.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + orderDto.getUserId()));
         order.setUser(user);
         order = orderRepository.save(order);
         return orderMapper.toDto(order);

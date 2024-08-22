@@ -29,21 +29,26 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         final String authorizationHeader = request.getHeader("Authorization");
 
         String username = null;
+        Long userId = null;
         String jwt = null;
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
             username = jwtUtil.extractUsername(jwt);
+            userId = jwtUtil.extractUserId(jwt); // Extract userId from token
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             if (jwtUtil.validateToken(jwt, username)) {
                 // Create an Authentication object with the user details
                 UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(username, null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
+                        new UsernamePasswordAuthenticationToken(username, null, List.of(new SimpleGrantedAuthority("ROLE_USER"))); //"ROLE_"+role
                 // Set the authentication in the SecurityContext
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                // Store userId in the request attributes or SecurityContext for later use
+                request.setAttribute("userId", userId);
             } else {
                 // If the token is invalid, clear the context and send an unauthorized response
                 SecurityContextHolder.clearContext();
@@ -51,7 +56,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 return;
             }
         }
-
         chain.doFilter(request, response);
     }
 }

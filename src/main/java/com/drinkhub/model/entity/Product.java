@@ -3,6 +3,7 @@ package com.drinkhub.model.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 @Data
 @Getter
 @Setter
+@NoArgsConstructor
 @Table(name = "products")
 public class Product {
 
@@ -26,6 +28,13 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private List<Review> reviews;
 
-    public Product() {
+    public Product(Long id, String name, String description, Double price, String category, Integer stock) {
+        this.id = id;
+        this.name = name;
+        this.description =description;
+        this.price = price;
+        this.category=category;
+        this.stock = stock;
     }
+
 }

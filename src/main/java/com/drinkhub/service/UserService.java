@@ -8,9 +8,11 @@ import com.drinkhub.repository.UserRepository;
 import com.drinkhub.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.velocity.exception.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -23,29 +25,41 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
+//    public UserDto registerUser(UserDto userDto) {
+//        User user = userMapper.toEntity(userDto);
+//        user.setPassword(passwordEncoder.encode(user.getPassword()));
+//        user = userRepository.save(user);
+//        return userMapper.toDto(user);
+//    }
+
     public UserDto registerUser(UserDto userDto) {
+        // Log the received userDto
+        System.out.println("Registering User with username: " + userDto.getUsername() + ", email: " + userDto.getEmail());
+
+        // Hash the password
+        String hashedPassword = passwordEncoder.encode(userDto.getPassword());
+
+        // Set the hashed password
+        userDto.setPassword(hashedPassword);
+
+        // Convert DTO to Entity and save user
         User user = userMapper.toEntity(userDto);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user = userRepository.save(user);
+
+        // Return the saved user's DTO
         return userMapper.toDto(user);
     }
     public String login(LoginDto loginDto) {
-        Optional<User> user = userRepository.findByUsername(loginDto.username());
-        if (user == null || !passwordEncoder.matches(loginDto.password(), user.get().getPassword())) {
-            throw new BadCredentialsException("Invalid username or password");
-        }
-        return jwtUtil.generateToken(user.get().getPassword());
-    }
+        User user = userRepository.findByUsername(loginDto.username())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password"));
 
-//    public JwtResponseDto loginUser(LoginDto loginDto) {
-//        User user = userRepository.findByUsername(loginDto.username())
-//                .orElseThrow(() -> new ResourceNotFoundException("Invalid username or password"));
-//        if (!passwordEncoder.matches(loginDto.password(), user.getPassword())) {
-//            throw new BadCredentialsException("Invalid username or password");
-//        }
-//        String token = jwtUtil.generateToken(user.getUsername());
-//        return new JwtResponseDto(token);
-//    }
+        if (!passwordEncoder.matches(loginDto.password(), user.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
+        }
+
+        // Generate and return the JWT token
+        return jwtUtil.generateToken(user.getUsername(), user.getId());
+    }
 
     public UserDto getUserProfile(String username) {
         User user = userRepository.findByUsername(username)

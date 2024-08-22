@@ -26,19 +26,12 @@ public class OrderController {
         return orderService.getOrderById(id);
     }
 
-
-//    @GetMapping("")
-//    public List<Order> getAllOrdersByUserId(
-//            @RequestParam(required = false) String status,
-//            @RequestParam(required = false) Long userId) {
-//        return orderService.findAll(status, userId);
-//    }
-
     @PostMapping
     public OrderDto placeOrder(@RequestBody OrderDto orderDto) {
         return orderService.placeOrder(orderDto);
     }
 
+    //TODO არ update ებს
     @PutMapping("/{id}")
     public OrderDto updateOrder(@PathVariable Long id, @RequestBody OrderStatusDto orderStatusDto) {
         return orderService.updateOrder(id, orderStatusDto);
