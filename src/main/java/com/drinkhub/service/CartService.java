@@ -2,13 +2,10 @@ package com.drinkhub.service;
 
 import com.drinkhub.model.dto.CartDto;
 import com.drinkhub.model.dto.CartItemDto;
-import com.drinkhub.model.dto.OrderDto;
 import com.drinkhub.model.entity.Cart;
 import com.drinkhub.model.entity.CartItem;
-import com.drinkhub.model.entity.Order;
 import com.drinkhub.model.entity.Product;
 import com.drinkhub.model.mapper.CartMapper;
-import com.drinkhub.model.mapper.OrderMapper;
 import com.drinkhub.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,10 +20,8 @@ public class CartService {
 
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
-    private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final CartMapper cartMapper;
-    private final OrderMapper orderMapper;
     private final ProductRepository productRepository;
 
     public CartDto viewCart(Long userId) {
@@ -46,12 +40,15 @@ public class CartService {
         Product product = productRepository.findById(cartItemDto.getProductId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found with id: " + cartItemDto.getProductId()));
 
-        CartItem cartItem = cartMapper.toEntity(cartItemDto);
+        CartItem cartItem = new CartItem();
         cartItem.setProduct(product);
+        cartItem.setQuantity(cartItemDto.getQuantity());
         cartItem.setCart(cart);
         cartItemRepository.save(cartItem);
+
         return cartMapper.toDto(cart);
     }
+
 
     public CartDto updateCartItem(Long userId, CartItemDto cartItemDto) {
         CartItem cartItem = cartItemRepository.findById(cartItemDto.getId())

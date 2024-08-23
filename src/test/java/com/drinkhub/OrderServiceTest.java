@@ -48,7 +48,7 @@ public class OrderServiceTest {
 
         // Assert
         assertNotNull(result);
-        assertEquals("PENDING", result.status());
+        assertEquals("PENDING", result.getStatus());
     }
 }
 

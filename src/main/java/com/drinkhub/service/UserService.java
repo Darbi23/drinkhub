@@ -6,6 +6,7 @@ import com.drinkhub.model.entity.User;
 import com.drinkhub.model.mapper.UserMapper;
 import com.drinkhub.repository.UserRepository;
 import com.drinkhub.utils.JwtUtil;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -25,21 +26,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-//    public UserDto registerUser(UserDto userDto) {
-//        User user = userMapper.toEntity(userDto);
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-//        user = userRepository.save(user);
-//        return userMapper.toDto(user);
-//    }
-
     public UserDto registerUser(UserDto userDto) {
-        // Log the received userDto
-        System.out.println("Registering User with username: " + userDto.getUsername() + ", email: " + userDto.getEmail());
-
-        // Hash the password
         String hashedPassword = passwordEncoder.encode(userDto.getPassword());
-
-        // Set the hashed password
         userDto.setPassword(hashedPassword);
 
         // Convert DTO to Entity and save user
@@ -52,13 +40,13 @@ public class UserService {
     public String login(LoginDto loginDto) {
         User user = userRepository.findByUsername(loginDto.username())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password"));
-
+        System.out.println("logindto: " + loginDto.password());
+        System.out.println("userdto: " + user.getPassword());
         if (!passwordEncoder.matches(loginDto.password(), user.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password 1");
         }
-
         // Generate and return the JWT token
-        return jwtUtil.generateToken(user.getUsername(), user.getId());
+        return jwtUtil.generateToken(user.getUsername(), user.getId(), String.valueOf(user.getRole()));
     }
 
     public UserDto getUserProfile(String username) {
@@ -74,8 +62,12 @@ public class UserService {
         existingUser = userRepository.save(existingUser);
         return userMapper.toDto(existingUser);
     }
-
+    @Transactional
     public void deleteUser(String username) {
-        userRepository.deleteByUsername(username);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + username));
+
+        // Perform any additional operations if needed before deletion
+        userRepository.delete(user);
     }
 }

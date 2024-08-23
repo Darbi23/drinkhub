@@ -29,11 +29,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())  // Disable CSRF protection using lambda syntax
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-//                                .requestMatchers("/users/login").permitAll()
-//                                .requestMatchers("/users/register").permitAll()
                                 .requestMatchers("/users/**").permitAll()
-                                .requestMatchers("/orders/**").hasAuthority("ROLE_USER") // Allow access to the /login endpoint
-                                .requestMatchers("/cart/**").hasAuthority("ROLE_USER") // Allow access to the /login endpoint
+                                .requestMatchers("/users/delete/**").hasRole("ADMIN")
+                                .requestMatchers("/orders/**").hasAuthority("ROLE_USER")
+                                .requestMatchers("/cart/**").hasAuthority("ROLE_USER")
                                 .requestMatchers("/products/**").hasAnyAuthority("ROLE_USER")
                                 .anyRequest().authenticated()  // Require authentication for any other request
                 )
@@ -50,4 +49,5 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }

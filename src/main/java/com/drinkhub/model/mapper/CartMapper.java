@@ -6,7 +6,6 @@ import com.drinkhub.model.entity.Cart;
 import com.drinkhub.model.entity.CartItem;
 import com.drinkhub.model.entity.Product;
 import com.drinkhub.repository.ProductRepository;
-import org.mapstruct.MappingTarget;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -29,11 +28,12 @@ public class CartMapper {
     }
 
     public CartItem toEntity(CartItemDto cartItemDto) {
-        Product product = productRepository.getReferenceById(cartItemDto.getProductId());
+        Product product = productRepository.findById(cartItemDto.getProductId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid product ID: " + cartItemDto.getProductId()));
+
         CartItem cartItem = new CartItem();
         cartItem.setProduct(product);
         cartItem.setQuantity(cartItemDto.getQuantity());
-
         return cartItem;
     }
 

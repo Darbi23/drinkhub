@@ -8,6 +8,7 @@ import com.drinkhub.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,20 +26,10 @@ public class UserController {
     }
 
     @PostMapping("/register")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDto> registerUser(@RequestBody UserDto userDto) {
-        try {
-            // Log the incoming userDto to check if it contains the expected data
-            System.out.println("Received UserDto for registration: " + userDto);
-            System.out.println("Received UserDto for registration: " + userDto.getUsername() + "  " + userDto.getEmail());
-
-            UserDto registeredUser = userService.registerUser(userDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
-        } catch (ResponseStatusException ex) {
-            return ResponseEntity.status(ex.getStatusCode()).body(null);
-        } catch (Exception ex) {
-            ex.printStackTrace();  // Log the exception stack trace for debugging
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+        UserDto registeredUser = userService.registerUser(userDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
     }
     @GetMapping("/{username}")
     public UserDto getUserProfile(@PathVariable String username) {
@@ -46,13 +37,15 @@ public class UserController {
     }
 
     @PutMapping("/{username}")
+    @PreAuthorize("hasRole('USER') or (hasRole('ADMIN') and #username == principal.username)")
     public UserDto updateUserProfile(@PathVariable String username, @RequestBody UserDto userDto) {
         return userService.updateUserProfile(username, userDto);
     }
 
 
     //TODO არ მუშაობს წაშლა
-    @DeleteMapping("/{username}")
+    @DeleteMapping("/delete/{username}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(@PathVariable String username) {
         userService.deleteUser(username);
     }

@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class CartItemDto {
-
     private Long id;
     private Long productId;
     private String productName;
