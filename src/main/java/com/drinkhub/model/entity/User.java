@@ -48,4 +48,13 @@ public class User {
         this.role = role;
     }
 
+    public User(Long id, String username, String email, String password, Role role, List<Order> orders, Cart cart) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.orders = orders;
+        this.cart = cart;
+    }
 }

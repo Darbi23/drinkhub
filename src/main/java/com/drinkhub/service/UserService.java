@@ -26,26 +26,39 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
+//    public UserDto registerUser(UserDto userDto) {
+//        String hashedPassword = passwordEncoder.encode(userDto.getPassword());
+//        userDto.setPassword(hashedPassword);
+//
+//        // Convert DTO to Entity and save user
+//        User user = userMapper.toEntity(userDto);
+//        user = userRepository.save(user);
+//
+//        // Return the saved user's DTO
+//        return userMapper.toDto(user);
+//    }
+
     public UserDto registerUser(UserDto userDto) {
-        String hashedPassword = passwordEncoder.encode(userDto.getPassword());
-        userDto.setPassword(hashedPassword);
 
-        // Convert DTO to Entity and save user
+        if (userRepository.findByUsername(userDto.getUsername()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists with this username");
+        }
+
+        if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists with this email");
+        }
+
         User user = userMapper.toEntity(userDto);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user = userRepository.save(user);
-
-        // Return the saved user's DTO
         return userMapper.toDto(user);
     }
     public String login(LoginDto loginDto) {
         User user = userRepository.findByUsername(loginDto.username())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password"));
-        System.out.println("logindto: " + loginDto.password());
-        System.out.println("userdto: " + user.getPassword());
         if (!passwordEncoder.matches(loginDto.password(), user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password 1");
         }
-        // Generate and return the JWT token
         return jwtUtil.generateToken(user.getUsername(), user.getId(), String.valueOf(user.getRole()));
     }
 
