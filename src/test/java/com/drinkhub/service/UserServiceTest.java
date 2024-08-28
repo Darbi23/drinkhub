@@ -117,24 +117,31 @@ class UserServiceTest {
     @Test
     void testLogin_Success() throws Exception {
         // Arrange
+        String username = "testUser";
+        String password = "testPass";
+        String encodedPassword = passwordEncoder.encode(password);
+        String expectedToken = "mockToken";  // Assume this is the token that would be generated.
+
         User user = new User();
-        user.setUsername("testUser");
-        user.setPassword(passwordEncoder.encode("testPass"));
+        user.setUsername(username);
+        user.setPassword(encodedPassword);
 
-        when(userRepository.findByUsername("testUser")).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
-        when(jwtUtil.generateToken(anyString(), anyLong(), anyString())).thenReturn("mockToken");
+        // Ensure the mock returns the user object correctly.
+        when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
+        // Ensure the password matching mock returns true
+        when(passwordEncoder.matches(password, encodedPassword)).thenReturn(true);
+        // Ensure the mock for token generation returns a mock token
+        when(jwtUtil.generateToken(username, user.getId(), "ROLE_USER")).thenReturn(expectedToken);
 
-        LoginDto loginDto = new LoginDto("testUser", "testPass");
+        LoginDto loginDto = new LoginDto(username, password);
 
         // Act
         String result = userService.login(loginDto);
 
         // Assert
-        assertNotNull(result);
-        assertEquals("mockToken", result);
+        assertNotNull(result, "Token should not be null after successful login");
+        assertEquals(expectedToken, result, "Expected token should match the result token");
     }
-
 
 
     @Test
@@ -142,7 +149,7 @@ class UserServiceTest {
         // Arrange
         User user = new User();
         user.setUsername("testUser");
-        user.setPassword(passwordEncoder.encode("testPass")); // Correctly encode the password
+        user.setPassword(passwordEncoder.encode("testPass"));
 
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
@@ -187,7 +194,7 @@ class UserServiceTest {
         when(userRepository.findByEmail(userDto.getEmail())).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(ResponseStatusException.class, () -> userService.registerUser(userDto));
+        assertThrows(RuntimeException.class, () -> userService.registerUser(userDto));
 
         // Verify that the userRepository's save method was never called
         verify(userRepository, never()).save(any(User.class));

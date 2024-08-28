@@ -26,7 +26,6 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDto> registerUser(@RequestBody UserDto userDto) {
         UserDto registeredUser = userService.registerUser(userDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
@@ -37,13 +36,10 @@ public class UserController {
     }
 
     @PutMapping("/{username}")
-    @PreAuthorize("hasRole('USER') or (hasRole('ADMIN') and #username == principal.username)")
     public UserDto updateUserProfile(@PathVariable String username, @RequestBody UserDto userDto) {
         return userService.updateUserProfile(username, userDto);
     }
 
-
-    //TODO არ მუშაობს წაშლა
     @DeleteMapping("/delete/{username}")
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(@PathVariable String username) {

@@ -8,6 +8,7 @@ import com.drinkhub.repository.ProductRepository;
 import com.drinkhub.repository.UserRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,9 +25,10 @@ public class OrderMapper {
     }
 
     public OrderDto toDto(Order order) {
-        List<Long> productIds = order.getProductList().stream()
-                .map(Product::getId)
-                .collect(Collectors.toList());
+        List<Long> productIds = order.getProductList() != null ?
+                order.getProductList().stream()
+                        .map(product -> product.getId())
+                        .collect(Collectors.toList()) : Collections.emptyList();
 
         return new OrderDto(order.getId(), order.getUser().getId(), productIds, order.getTotalAmount(), order.getStatus());
     }

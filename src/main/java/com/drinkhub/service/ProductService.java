@@ -8,9 +8,11 @@ import com.drinkhub.model.mapper.ProductMapper;
 import com.drinkhub.repository.CartItemRepository;
 import com.drinkhub.repository.ProductRepository;
 import com.drinkhub.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -59,24 +61,18 @@ public class ProductService {
         return productMapper.toDto(existingProduct);
     }
 
+    @Transactional
     public void deleteProduct(Long id) {
-        // Check if the user is ADMIN
-        System.out.println("deleting product");
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        boolean isAdmin = false;
+        // Fetch the authentication object
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (principal instanceof UserDetails) {
-            UserDetails userDetails = (UserDetails) principal;
-            isAdmin = userDetails.getAuthorities().stream()
-                    .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-        } else if (principal instanceof String) {
-            // You can fetch the user's roles from the database if necessary
-            // For example, if you have a UserService, you could do:
-            String username = (String) principal;
-            User user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + username));
-            isAdmin = user.getRole().equals("ADMIN");
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new SecurityException("Only authenticated users can delete products");
         }
+
+        // Check if the user has the ADMIN role
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
         if (!isAdmin) {
             throw new SecurityException("Only ADMIN can delete products");
@@ -95,5 +91,4 @@ public class ProductService {
         // Delete the product
         productRepository.delete(product);
     }
-
 }

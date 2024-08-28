@@ -26,26 +26,14 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-//    public UserDto registerUser(UserDto userDto) {
-//        String hashedPassword = passwordEncoder.encode(userDto.getPassword());
-//        userDto.setPassword(hashedPassword);
-//
-//        // Convert DTO to Entity and save user
-//        User user = userMapper.toEntity(userDto);
-//        user = userRepository.save(user);
-//
-//        // Return the saved user's DTO
-//        return userMapper.toDto(user);
-//    }
-
     public UserDto registerUser(UserDto userDto) {
 
         if (userRepository.findByUsername(userDto.getUsername()).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists with this username");
+            throw new RuntimeException("User already exists with this username");
         }
 
         if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists with this email");
+            throw new RuntimeException("User already exists with this email");
         }
 
         User user = userMapper.toEntity(userDto);
@@ -55,10 +43,12 @@ public class UserService {
     }
     public String login(LoginDto loginDto) {
         User user = userRepository.findByUsername(loginDto.username())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password"));
+                .orElseThrow(() -> new RuntimeException("Invalid username or password ( username not found)"));
+
         if (!passwordEncoder.matches(loginDto.password(), user.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password 1");
+            throw new RuntimeException("Invalid username or password ( incorrect password)");
         }
+
         return jwtUtil.generateToken(user.getUsername(), user.getId(), String.valueOf(user.getRole()));
     }
 
@@ -67,7 +57,7 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + username));
         return userMapper.toDto(user);
     }
-
+    @Transactional
     public UserDto updateUserProfile(String username, UserDto userDto) {
         User existingUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + username));
@@ -79,7 +69,8 @@ public class UserService {
     public void deleteUser(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + username));
-
+        System.out.println("Deleting user with username: " + username);
+        System.out.println("User Role: " + user.getRole());
         // Perform any additional operations if needed before deletion
         userRepository.delete(user);
     }

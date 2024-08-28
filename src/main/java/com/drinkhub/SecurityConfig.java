@@ -4,6 +4,7 @@ import com.drinkhub.utils.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -14,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     private final JwtRequestFilter jwtRequestFilter;
@@ -26,20 +28,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())  // Disable CSRF protection using lambda syntax
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/users/**").permitAll()
                                 .requestMatchers("/users/delete/**").hasRole("ADMIN")
-                                .requestMatchers("/orders/**").hasAuthority("ROLE_USER")
-                                .requestMatchers("/cart/**").hasAuthority("ROLE_USER")
-                                .requestMatchers("/products/**").hasAnyAuthority("ROLE_USER")
+                                .requestMatchers("/products/delete/**").hasRole("ADMIN")
+                                .requestMatchers("/orders/**").hasAnyRole("USER", "ADMIN")
+                                .requestMatchers("/cart/**").hasAnyRole("USER", "ADMIN")
+                                .requestMatchers("/products/**").hasAnyRole("USER", "ADMIN")
                                 .anyRequest().authenticated()  // Require authentication for any other request
                 )
                 .sessionManagement(sessionManagement ->
-                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)  // No session is created; JWT is used
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );
-        // Add JWT filter before the UsernamePasswordAuthenticationFilter
+
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

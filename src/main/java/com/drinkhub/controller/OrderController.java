@@ -18,7 +18,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public List<OrderDto> getAllOrders(@RequestParam(required = false) Long userId) {
         return orderService.getAllOrders(userId);
     }
@@ -30,7 +30,7 @@ public class OrderController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public OrderDto placeOrder(@RequestBody OrderDto orderDto) {
         return orderService.placeOrder(orderDto);
     }

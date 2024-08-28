@@ -23,13 +23,13 @@ public class CartController {
     private final CurrentUser currentUser;
 
     @GetMapping()
-    @PreAuthorize("hasRole('USER')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public CartDto viewCart() {
         return cartService.viewCart(currentUser.getUserId());
     }
 
     @PostMapping("/add")
-    @PreAuthorize("hasRole('USER')")
+//    @PreAuthorize("hasRole('USER')")
     public CartDto addItemToCart(@RequestBody CartItemDto cartItemDto) {
         Long userId = currentUser.getUserId();
         return cartService.addItemToCart(userId, cartItemDto);
@@ -37,7 +37,7 @@ public class CartController {
 
 
     @PutMapping("/update")
-    @PreAuthorize("hasRole('USER')")
+//    @PreAuthorize("hasRole('USER')")
     public CartDto updateCartItem(@RequestParam Long userId, @RequestBody CartItemDto cartItemDto) {
         return cartService.updateCartItem(userId, cartItemDto);
     }

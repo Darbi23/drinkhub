@@ -4,6 +4,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -14,6 +16,7 @@ import java.util.function.Function;
 
 @Component
 public class JwtUtil {
+    private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
     private final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
@@ -25,8 +28,15 @@ public class JwtUtil {
         return extractClaim(token, claims -> claims.get("userId", Long.class));
     }
     public String extractRole(String token) {
-        return extractClaim(token, claims -> claims.get("role", String.class));
+        String role = extractClaim(token, claims -> claims.get("role", String.class));
+        if (role == null) {
+            logger.info("Role is null in JWT token");
+        } else {
+            logger.info("Extracted Role from JWT: " + role);
+        }
+        return role;
     }
+
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
@@ -37,8 +47,15 @@ public class JwtUtil {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(SECRET_KEY)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        logger.info("Extracted Claims: " + claims);
+        return claims;
     }
+
 
     private Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());

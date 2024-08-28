@@ -40,8 +40,6 @@ public class ProductController {
         return productService.updateProduct(id, productDto);
     }
 
-
-    //TODO არ მუშაობს სექურითი პრობლემაა
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteProduct(@PathVariable Long id) {
