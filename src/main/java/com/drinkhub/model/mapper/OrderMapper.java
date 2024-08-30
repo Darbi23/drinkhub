@@ -30,6 +30,8 @@ public class OrderMapper {
                         .map(product -> product.getId())
                         .collect(Collectors.toList()) : Collections.emptyList();
 
+        System.out.println("Order DTO Status: " + order.getStatus());
+
         return new OrderDto(order.getId(), order.getUser().getId(), productIds, order.getTotalAmount(), order.getStatus());
     }
 

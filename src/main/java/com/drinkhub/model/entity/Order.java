@@ -44,6 +44,6 @@ public class Order {
         this.productList = productList;
         this.totalAmount = totalAmount;
         this.status = status;
-        this.orderDate = new Date(); // Assuming you want to set order date to the current date
+        this.orderDate = new Date();
     }
 }

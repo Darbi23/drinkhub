@@ -27,8 +27,8 @@ class UserControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private final String testUsername = "testUser";
-    private final String testEmail = "test@example.com";
+    private final String testUsername = "justUser";
+    private final String testEmail = "test11@example.com";
 
     @Test
     void testUserRegistration() throws Exception {
@@ -38,13 +38,5 @@ class UserControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isCreated());
-    }
-
-    @AfterEach
-    void cleanUp() throws Exception {
-        // Delete the test user to clean up
-        mockMvc.perform(delete("/users/delete/" + testUsername)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
     }
 }

@@ -3,6 +3,7 @@ package com.drinkhub.service;
 import com.drinkhub.model.dto.ProductDto;
 import com.drinkhub.model.entity.Product;
 import com.drinkhub.model.mapper.ProductMapper;
+import com.drinkhub.repository.CartItemRepository;
 import com.drinkhub.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,9 @@ class ProductServiceTest {
 
     @Mock
     private ProductMapper productMapper;
+
+    @Mock
+    private CartItemRepository cartItemRepository;
 
     @InjectMocks
     private ProductService productService;

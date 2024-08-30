@@ -49,10 +49,18 @@ public class OrderService {
     public OrderDto updateOrder(Long id, OrderStatusDto orderStatusDto) {
         Order existingOrder = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + id));
+
+        System.out.println("Current Status: " + existingOrder.getStatus());
+        System.out.println("New Status: " + orderStatusDto.status());
+
         existingOrder.setStatus(orderStatusDto.status());
         existingOrder = orderRepository.save(existingOrder);
+
+        System.out.println("Updated Status: " + existingOrder.getStatus());
+
         return orderMapper.toDto(existingOrder);
     }
+
 
     public void cancelOrder(Long id) {
         orderRepository.deleteById(id);

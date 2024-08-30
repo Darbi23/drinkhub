@@ -125,9 +125,14 @@ public class CartServiceTest {
         cartItem.setId(1L);
         cartItem.setQuantity(cartItemDto.getQuantity());
 
+        User user = new User();
+        user.setId(1L);
+
         Cart cart = new Cart();
         cart.setId(1L);
         cart.setItems(List.of(cartItem));
+        cartItem.setCart(cart);
+        cart.setUser(user);
 
         CartDto cartDto = new CartDto(1L, 1L, List.of(cartItemDto), 20.0);
 

@@ -53,6 +53,10 @@ public class CartService {
     public CartDto updateCartItem(Long userId, CartItemDto cartItemDto) {
         CartItem cartItem = cartItemRepository.findById(cartItemDto.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart item not found with id: " + cartItemDto.getId()));
+
+        if (!cartItem.getCart().getUser().getId().equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Unauthorized to modify this cart item");
+        }
         cartItem.setQuantity(cartItemDto.getQuantity());
         cartItem = cartItemRepository.save(cartItem);
         return viewCart(userId);

@@ -63,32 +63,15 @@ public class ProductService {
 
     @Transactional
     public void deleteProduct(Long id) {
-        // Fetch the authentication object
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new SecurityException("Only authenticated users can delete products");
-        }
-
-        // Check if the user has the ADMIN role
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-
-        if (!isAdmin) {
-            throw new SecurityException("Only ADMIN can delete products");
-        }
-
-        // Fetch the product
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
 
-        // Delete associated CartItems
         List<CartItem> cartItems = cartItemRepository.findByProduct(product);
         if (!cartItems.isEmpty()) {
             cartItemRepository.deleteAll(cartItems);
         }
 
-        // Delete the product
         productRepository.delete(product);
     }
 }

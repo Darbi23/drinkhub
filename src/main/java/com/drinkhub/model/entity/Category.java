@@ -16,8 +16,6 @@ public class Category {
     private Long id;
     private String name;
 
-    // Default constructor
     public Category() {}
 
-    // Getters and Setters
 }

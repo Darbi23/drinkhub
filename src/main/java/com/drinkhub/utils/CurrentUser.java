@@ -15,12 +15,10 @@ public class CurrentUser {
     }
 
     public Long getUserId() {
-        // Retrieve the user ID from the request attributes
         return (Long) request.getAttribute("userId");
     }
 
     public String getUsername() {
-        // Retrieve the username from the SecurityContext
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
             return authentication.getName();

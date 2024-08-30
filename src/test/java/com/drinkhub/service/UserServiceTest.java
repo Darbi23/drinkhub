@@ -125,13 +125,15 @@ class UserServiceTest {
         User user = new User();
         user.setUsername(username);
         user.setPassword(encodedPassword);
+        user.setRole(Role.USER);
+        user.setId(1L);
 
         // Ensure the mock returns the user object correctly.
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
         // Ensure the password matching mock returns true
         when(passwordEncoder.matches(password, encodedPassword)).thenReturn(true);
         // Ensure the mock for token generation returns a mock token
-        when(jwtUtil.generateToken(username, user.getId(), "ROLE_USER")).thenReturn(expectedToken);
+        when(jwtUtil.generateToken(username, user.getId(), String.valueOf(user.getRole()))).thenReturn(expectedToken);
 
         LoginDto loginDto = new LoginDto(username, password);
 

@@ -18,24 +18,21 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-//    @PreAuthorize("hasRole('ADMIN')")
     public List<OrderDto> getAllOrders(@RequestParam(required = false) Long userId) {
         return orderService.getAllOrders(userId);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public OrderDto getOrderById(@PathVariable Long id) {
         return orderService.getOrderById(id);
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public OrderDto placeOrder(@RequestBody OrderDto orderDto) {
         return orderService.placeOrder(orderDto);
     }
 
-    //TODO არ update ებს
+    // Only updating status
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public OrderDto updateOrder(@PathVariable Long id, @RequestBody OrderStatusDto orderStatusDto) {
