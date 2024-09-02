@@ -51,7 +51,6 @@ public class CartServiceTest {
 
     @Test
     void testViewCart_Success() {
-        // Arrange
         User user = new User(1L, "testUser", "test@example.com", "password", Role.USER, null, null);
         Cart cart = new Cart();
         cart.setId(1L);
@@ -63,10 +62,8 @@ public class CartServiceTest {
         when(cartRepository.findByUserId(anyLong())).thenReturn(Optional.of(cart));
         when(cartMapper.toDto(any(Cart.class))).thenReturn(cartDto);
 
-        // Act
         CartDto result = cartService.viewCart(user.getId());
 
-        // Assert
         assertNotNull(result);
         assertEquals(cartDto.getId(), result.getId());
         assertEquals(cartDto.getUserId(), result.getUserId());
@@ -74,7 +71,6 @@ public class CartServiceTest {
 
     @Test
     void testAddItemToCart_Success() {
-        // Arrange
         User user = new User(1L, "testUser", "test@example.com", "password", Role.USER, null, null);
         Cart cart = new Cart();
         cart.setId(1L);
@@ -98,10 +94,8 @@ public class CartServiceTest {
         when(cartItemRepository.save(any(CartItem.class))).thenReturn(cartItem);
         when(cartMapper.toDto(any(Cart.class))).thenReturn(cartDto);
 
-        // Act
         CartDto result = cartService.addItemToCart(user.getId(), cartItemDto);
 
-        // Assert
         assertNotNull(result);
         assertEquals(cartDto.getId(), result.getId());
         assertEquals(cartDto.getUserId(), result.getUserId());
@@ -110,16 +104,13 @@ public class CartServiceTest {
 
     @Test
     void testAddItemToCart_CartNotFound() {
-        // Arrange
         when(cartRepository.findByUserId(anyLong())).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(ResponseStatusException.class, () -> cartService.addItemToCart(1L, new CartItemDto(null, 1L, "Product1", 10.0, 1)));
     }
 
     @Test
     void testUpdateCartItem_Success() {
-        // Arrange
         CartItemDto cartItemDto = new CartItemDto(1L, 1L, "Product1", 10.0, 2);
         CartItem cartItem = new CartItem();
         cartItem.setId(1L);
@@ -141,10 +132,8 @@ public class CartServiceTest {
         when(cartItemRepository.save(any(CartItem.class))).thenReturn(cartItem);
         when(cartMapper.toDto(any(Cart.class))).thenReturn(cartDto);
 
-        // Act
         CartDto result = cartService.updateCartItem(1L, cartItemDto);
 
-        // Assert
         assertNotNull(result);
         assertEquals(cartDto.getId(), result.getId());
         assertEquals(cartDto.getItems().size(), result.getItems().size());
@@ -152,7 +141,6 @@ public class CartServiceTest {
 
     @Test
     void testRemoveItemFromCart_Success() {
-        // Arrange
         Cart cart = new Cart();
         cart.setId(1L);
 
@@ -170,10 +158,8 @@ public class CartServiceTest {
         doNothing().when(cartItemRepository).delete(any(CartItem.class));
         when(cartMapper.toDto(any(Cart.class))).thenReturn(cartDto);
 
-        // Act
         CartDto result = cartService.removeItemFromCart(1L, product.getId());
 
-        // Assert
         assertNotNull(result);
         assertEquals(cartDto.getId(), result.getId());
         assertEquals(0, result.getItems().size());
@@ -181,14 +167,12 @@ public class CartServiceTest {
 
     @Test
     void testRemoveItemFromCart_ItemNotFound() {
-        // Arrange
         Cart cart = new Cart();
         cart.setId(1L);
 
         when(cartRepository.findByUserId(anyLong())).thenReturn(Optional.of(cart));
         when(cartItemRepository.findByCartAndProductId(any(Cart.class), anyLong())).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(ResponseStatusException.class, () -> cartService.removeItemFromCart(1L, 1L));
     }
 }

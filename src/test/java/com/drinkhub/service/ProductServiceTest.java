@@ -42,7 +42,6 @@ class ProductServiceTest {
 
     @Test
     void testGetAllProducts_Success() {
-        // Arrange
         Product product1 = new Product(1L, "Product1", "Description1", 10.0, "Category1", 100);
         Product product2 = new Product(2L, "Product2", "Description2", 15.0, "Category1", 200);
 
@@ -52,10 +51,8 @@ class ProductServiceTest {
         when(productRepository.findAll(any(Sort.class))).thenReturn(Arrays.asList(product1, product2));
         when(productMapper.toDtoList(anyList())).thenReturn(Arrays.asList(productDto1, productDto2));
 
-        // Act
         List<ProductDto> result = productService.getAllProducts(null, null, null);
 
-        // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals("Product1", result.get(0).getName());
@@ -64,24 +61,20 @@ class ProductServiceTest {
 
     @Test
     void testGetProductById_Success() {
-        // Arrange
         Product product = new Product(1L, "Product1", "Description1", 10.0, "Category1", 100);
         ProductDto productDto = new ProductDto(1L, "Product1", "Description1", 10.0, "Category1", 100);
 
         when(productRepository.findById(anyLong())).thenReturn(Optional.of(product));
         when(productMapper.toDto(any(Product.class))).thenReturn(productDto);
 
-        // Act
         ProductDto result = productService.getProductById(1L);
 
-        // Assert
         assertNotNull(result);
         assertEquals("Product1", result.getName());
     }
 
     @Test
     void testAddProduct_Success() {
-        // Arrange
         ProductDto productDto = new ProductDto(null, "Product1", "Description1", 10.0, "Category1", 100);
         Product product = new Product(null, "Product1", "Description1", 10.0, "Category1", 100);
         Product savedProduct = new Product(1L, "Product1", "Description1", 10.0, "Category1", 100);
@@ -91,17 +84,14 @@ class ProductServiceTest {
         when(productRepository.save(any(Product.class))).thenReturn(savedProduct);
         when(productMapper.toDto(any(Product.class))).thenReturn(savedProductDto);
 
-        // Act
         ProductDto result = productService.addProduct(productDto);
 
-        // Assert
         assertNotNull(result);
         assertEquals("Product1", result.getName());
     }
 
     @Test
     void testUpdateProduct_Success() {
-        // Arrange
         ProductDto productDto = new ProductDto(1L, "UpdatedProduct", "UpdatedDescription", 20.0, "UpdatedCategory", 150);
         Product existingProduct = new Product(1L, "Product1", "Description1", 10.0, "Category1", 100);
         Product updatedProduct = new Product(1L, "UpdatedProduct", "UpdatedDescription", 20.0, "UpdatedCategory", 150);
@@ -112,35 +102,28 @@ class ProductServiceTest {
         when(productRepository.save(any(Product.class))).thenReturn(updatedProduct);
         when(productMapper.toDto(any(Product.class))).thenReturn(updatedProductDto);
 
-        // Act
         ProductDto result = productService.updateProduct(1L, productDto);
 
-        // Assert
         assertNotNull(result);
         assertEquals("UpdatedProduct", result.getName());
     }
 
     @Test
     void testDeleteProduct_Success() {
-        // Arrange
         Product product = new Product(1L, "Product1", "Description1", 10.0, "Category1", 100);
 
         when(productRepository.findById(anyLong())).thenReturn(Optional.of(product));
         doNothing().when(productRepository).delete(any(Product.class));
 
-        // Act
         productService.deleteProduct(1L);
 
-        // Assert
         verify(productRepository, times(1)).delete(product);
     }
 
     @Test
     void testGetProductById_NotFound() {
-        // Arrange
         when(productRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(Exception.class, () -> productService.getProductById(1L));
     }
 }

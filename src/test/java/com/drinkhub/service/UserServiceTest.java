@@ -46,7 +46,6 @@ class UserServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Common test data
         user = new User("testUser", "test@example.com", "encodedPass", Role.USER);
         user.setId(1L);
 
@@ -67,21 +66,18 @@ class UserServiceTest {
 
     @Test
     void testEditUser_Success() {
-        // Arrange
+
         UserDto updatedUserDto = new UserDto(1L, "newTestUser", "newTest@example.com", "newTestPass", Role.USER);
         User existingUser = new User("testUser", "test@example.com", "encodedPass", Role.USER);
         User updatedUser = new User("newTestUser", "newTest@example.com", "encodedPass", Role.USER);
         updatedUser.setId(1L);  // Set the same ID to simulate the update
 
-        // Mock the behavior of the repository and mapper
         when(userRepository.findByUsername("testUser")).thenReturn(Optional.of(existingUser));
         when(userRepository.save(any(User.class))).thenReturn(updatedUser);
         when(userMapper.toDto(any(User.class))).thenReturn(updatedUserDto);
 
-        // Act
         UserDto result = userService.updateUserProfile("testUser", updatedUserDto);
 
-        // Assert
         assertNotNull(result);
         assertEquals("newTestUser", result.getUsername());  // This checks that the username was updated correctly
         assertEquals("newTest@example.com", result.getEmail());
@@ -90,16 +86,13 @@ class UserServiceTest {
 
     @Test
     void testDeleteUser_Success() {
-        // Arrange
         User user = new User("testUser", "test@example.com", "encodedPass", Role.USER);
         user.setId(1L);
 
         when(userRepository.findByUsername("testUser")).thenReturn(Optional.of(user));
 
-        // Act
         userService.deleteUser("testUser");
 
-        // Assert
         verify(userRepository, times(1)).findByUsername("testUser");
         verify(userRepository, times(1)).delete(user); // Verify delete by entity is called
     }
@@ -128,19 +121,14 @@ class UserServiceTest {
         user.setRole(Role.USER);
         user.setId(1L);
 
-        // Ensure the mock returns the user object correctly.
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
-        // Ensure the password matching mock returns true
         when(passwordEncoder.matches(password, encodedPassword)).thenReturn(true);
-        // Ensure the mock for token generation returns a mock token
         when(jwtUtil.generateToken(username, user.getId(), String.valueOf(user.getRole()))).thenReturn(expectedToken);
 
         LoginDto loginDto = new LoginDto(username, password);
 
-        // Act
         String result = userService.login(loginDto);
 
-        // Assert
         assertNotNull(result, "Token should not be null after successful login");
         assertEquals(expectedToken, result, "Expected token should match the result token");
     }
@@ -148,7 +136,6 @@ class UserServiceTest {
 
     @Test
     void testLogin_Failure_InvalidPassword() {
-        // Arrange
         User user = new User();
         user.setUsername("testUser");
         user.setPassword(passwordEncoder.encode("testPass"));
@@ -158,14 +145,12 @@ class UserServiceTest {
 
         LoginDto loginDto = new LoginDto("testUser", "wrongPass"); // Use wrong password for test
 
-        // Act & Assert
         assertThrows(Exception.class, () -> userService.login(loginDto));
     }
 
 
     @Test
     void testRegisterUser_Success() {
-        // Arrange
         UserDto userDto = new UserDto(null, "testUser", "test@example.com", "testPass", Role.USER);
         User user = new User(userDto.getUsername(), userDto.getEmail(), "encodedPass", userDto.getRole());
 
@@ -174,10 +159,8 @@ class UserServiceTest {
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPass");
         when(userMapper.toDto(any(User.class))).thenReturn(new UserDto(user.getId(), user.getUsername(), user.getEmail(), null, user.getRole()));
 
-        // Act
         UserDto result = userService.registerUser(userDto);
 
-        // Assert
         assertNotNull(result);
         assertEquals("testUser", result.getUsername());
         assertEquals("test@example.com", result.getEmail());
@@ -186,19 +169,14 @@ class UserServiceTest {
 
     @Test
     void testRegisterUser_Failure_UserAlreadyExists() {
-        // Arrange
         UserDto userDto = new UserDto(null, "testUser", "test@example.com", "testPass", Role.USER);
         User existingUser = new User(userDto.getUsername(), userDto.getEmail(), "encodedPass", userDto.getRole());
 
-        // Mock the behavior: the repository should return an Optional containing the existing user
         when(userRepository.findByUsername(userDto.getUsername())).thenReturn(Optional.of(existingUser));
-        // Optional: Also mock for email to handle both username and email existing scenarios
         when(userRepository.findByEmail(userDto.getEmail())).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(RuntimeException.class, () -> userService.registerUser(userDto));
 
-        // Verify that the userRepository's save method was never called
         verify(userRepository, never()).save(any(User.class));
     }
 

@@ -32,7 +32,6 @@ public class OrderController {
         return orderService.placeOrder(orderDto);
     }
 
-    // Only updating status
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public OrderDto updateOrder(@PathVariable Long id, @RequestBody OrderStatusDto orderStatusDto) {

@@ -71,7 +71,6 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + username));
         System.out.println("Deleting user with username: " + username);
         System.out.println("User Role: " + user.getRole());
-        // Perform any additional operations if needed before deletion
         userRepository.delete(user);
     }
 }

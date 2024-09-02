@@ -45,7 +45,6 @@ class OrderServiceTest {
 
     @Test
     void testGetAllOrders_Success() {
-        // Arrange
         Order order1 = new Order();
         order1.setId(1L);
         order1.setStatus("PENDING");
@@ -64,17 +63,14 @@ class OrderServiceTest {
                 new OrderDto(order2.getId(), 1L, Collections.emptyList(), 200.0, order2.getStatus())
         ));
 
-        // Act
         List<OrderDto> result = orderService.getAllOrders(null);
 
-        // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
     }
 
     @Test
     void testGetOrderById_Success() {
-        // Arrange
         Order order = new Order();
         order.setId(1L);
         order.setStatus("PENDING");
@@ -82,10 +78,8 @@ class OrderServiceTest {
         when(orderRepository.findById(anyLong())).thenReturn(Optional.of(order));
         when(orderMapper.toDto(any(Order.class))).thenReturn(new OrderDto(order.getId(), 1L, Collections.emptyList(), 100.0, order.getStatus()));
 
-        // Act
         OrderDto result = orderService.getOrderById(1L);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1L, result.getId());
         assertEquals("PENDING", result.getStatus());
@@ -93,16 +87,13 @@ class OrderServiceTest {
 
     @Test
     void testGetOrderById_NotFound() {
-        // Arrange
         when(orderRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(ResourceNotFoundException.class, () -> orderService.getOrderById(1L));
     }
 
     @Test
     void testPlaceOrder_Success() {
-        // Arrange
         OrderDto orderDto = new OrderDto(null, 1L, List.of(1L, 2L), 300.0, "PENDING");
         Order order = new Order();
         order.setId(1L); // Make sure the mock sets the ID here
@@ -112,17 +103,14 @@ class OrderServiceTest {
         when(orderRepository.save(any(Order.class))).thenReturn(order); // Ensure this mock returns the order with ID set
         when(orderMapper.toDto(any(Order.class))).thenReturn(new OrderDto(1L, 1L, List.of(1L, 2L), 300.0, "PENDING"));
 
-        // Act
         OrderDto result = orderService.placeOrder(orderDto);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1L, result.getId()); // Make sure the expected ID matches the mock setup
     }
 
     @Test
     void testUpdateOrder_Success() {
-        // Arrange
         Order order = new Order();
         order.setId(1L);
         order.setStatus("PENDING");
@@ -133,23 +121,18 @@ class OrderServiceTest {
         when(orderRepository.save(any(Order.class))).thenReturn(order);
         when(orderMapper.toDto(any(Order.class))).thenReturn(new OrderDto(order.getId(), 1L, Collections.emptyList(), 100.0, "COMPLETED"));
 
-        // Act
         OrderDto result = orderService.updateOrder(1L, orderStatusDto);
 
-        // Assert
         assertNotNull(result);
         assertEquals("COMPLETED", result.getStatus());
     }
 
     @Test
     void testDeleteOrder_Success() {
-        // Arrange
         doNothing().when(orderRepository).deleteById(anyLong());
 
-        // Act
         assertDoesNotThrow(() -> orderService.cancelOrder(1L));
 
-        // Assert
         verify(orderRepository, times(1)).deleteById(anyLong());
     }
 }
