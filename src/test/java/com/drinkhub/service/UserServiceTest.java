@@ -70,7 +70,7 @@ class UserServiceTest {
         UserDto updatedUserDto = new UserDto(1L, "newTestUser", "newTest@example.com", "newTestPass", Role.USER);
         User existingUser = new User("testUser", "test@example.com", "encodedPass", Role.USER);
         User updatedUser = new User("newTestUser", "newTest@example.com", "encodedPass", Role.USER);
-        updatedUser.setId(1L);  // Set the same ID to simulate the update
+        updatedUser.setId(1L);
 
         when(userRepository.findByUsername("testUser")).thenReturn(Optional.of(existingUser));
         when(userRepository.save(any(User.class))).thenReturn(updatedUser);
@@ -79,9 +79,9 @@ class UserServiceTest {
         UserDto result = userService.updateUserProfile("testUser", updatedUserDto);
 
         assertNotNull(result);
-        assertEquals("newTestUser", result.getUsername());  // This checks that the username was updated correctly
+        assertEquals("newTestUser", result.getUsername());
         assertEquals("newTest@example.com", result.getEmail());
-        verify(userRepository, times(1)).save(any(User.class));  // Verify that the save method was called exactly once
+        verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
@@ -94,7 +94,7 @@ class UserServiceTest {
         userService.deleteUser("testUser");
 
         verify(userRepository, times(1)).findByUsername("testUser");
-        verify(userRepository, times(1)).delete(user); // Verify delete by entity is called
+        verify(userRepository, times(1)).delete(user);
     }
 
 
@@ -109,11 +109,10 @@ class UserServiceTest {
     }
     @Test
     void testLogin_Success() throws Exception {
-        // Arrange
         String username = "testUser";
         String password = "testPass";
         String encodedPassword = passwordEncoder.encode(password);
-        String expectedToken = "mockToken";  // Assume this is the token that would be generated.
+        String expectedToken = "mockToken";
 
         User user = new User();
         user.setUsername(username);
@@ -143,7 +142,7 @@ class UserServiceTest {
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
 
-        LoginDto loginDto = new LoginDto("testUser", "wrongPass"); // Use wrong password for test
+        LoginDto loginDto = new LoginDto("testUser", "wrongPass");
 
         assertThrows(Exception.class, () -> userService.login(loginDto));
     }

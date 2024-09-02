@@ -38,10 +38,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             username = jwtUtil.extractUsername(jwt);
             userId = jwtUtil.extractUserId(jwt);
             role = jwtUtil.extractRole(jwt);
-
-            System.out.println("Extracted Username: " + username);
-            System.out.println("Extracted UserId: " + userId);
-            System.out.println("Extracted Role: " + role);
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

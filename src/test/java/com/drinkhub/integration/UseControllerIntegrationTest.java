@@ -32,7 +32,6 @@ class UserControllerIntegrationTest {
 
     @Test
     void testUserRegistration() throws Exception {
-        // Register a new user
         UserDto userDto = new UserDto(null, testUsername, testEmail, "testPass", Role.USER);
         mockMvc.perform(post("/users/register")
                         .contentType(MediaType.APPLICATION_JSON)

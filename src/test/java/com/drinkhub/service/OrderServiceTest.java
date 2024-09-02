@@ -96,17 +96,17 @@ class OrderServiceTest {
     void testPlaceOrder_Success() {
         OrderDto orderDto = new OrderDto(null, 1L, List.of(1L, 2L), 300.0, "PENDING");
         Order order = new Order();
-        order.setId(1L); // Make sure the mock sets the ID here
+        order.setId(1L);
 
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(new User()));
         when(orderMapper.toEntity(any(OrderDto.class))).thenReturn(order);
-        when(orderRepository.save(any(Order.class))).thenReturn(order); // Ensure this mock returns the order with ID set
+        when(orderRepository.save(any(Order.class))).thenReturn(order);
         when(orderMapper.toDto(any(Order.class))).thenReturn(new OrderDto(1L, 1L, List.of(1L, 2L), 300.0, "PENDING"));
 
         OrderDto result = orderService.placeOrder(orderDto);
 
         assertNotNull(result);
-        assertEquals(1L, result.getId()); // Make sure the expected ID matches the mock setup
+        assertEquals(1L, result.getId());
     }
 
     @Test

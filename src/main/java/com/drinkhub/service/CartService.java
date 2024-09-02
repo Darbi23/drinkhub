@@ -2,10 +2,13 @@ package com.drinkhub.service;
 
 import com.drinkhub.model.dto.CartDto;
 import com.drinkhub.model.dto.CartItemDto;
+import com.drinkhub.model.dto.OrderDto;
 import com.drinkhub.model.entity.Cart;
 import com.drinkhub.model.entity.CartItem;
+import com.drinkhub.model.entity.Order;
 import com.drinkhub.model.entity.Product;
 import com.drinkhub.model.mapper.CartMapper;
+import com.drinkhub.model.mapper.OrderMapper;
 import com.drinkhub.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +27,8 @@ public class CartService {
     private final UserRepository userRepository;
     private final CartMapper cartMapper;
     private final ProductRepository productRepository;
+    private final OrderRepository orderRepository;
+    private final OrderMapper orderMapper;
 
     public CartDto viewCart(Long userId) {
         Optional<Cart> cart = cartRepository.findByUserId(userId);
@@ -74,18 +80,18 @@ public class CartService {
     }
 
 
-//    public OrderDto checkout(Long userId) {
-//        Cart cart = cartRepository.findByUserId(userId)
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart not found for user id: " + userId));
-//        Order order = new Order();
-//        order.setUser(cart.getUser());
-//        order.setProductList(cart.getItems().stream()
-//                .map(CartItem::getProduct)
-//                .collect(Collectors.toList()));
-//        order.setTotalAmount(cart.calculateTotal());
-//        order.setStatus("PENDING");
-//        order = orderRepository.save(order);
-//        cartItemRepository.deleteAll(cart.getItems());
-//        return orderMapper.toDto(order);
-//    }
+    public OrderDto checkout(Long userId) {
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart not found for user id: " + userId));
+        Order order = new Order();
+        order.setUser(cart.getUser());
+        order.setProductList(cart.getItems().stream()
+                .map(CartItem::getProduct)
+                .collect(Collectors.toList()));
+        order.setTotalAmount(cart.calculateTotal());
+        order.setStatus("PENDING");
+        order = orderRepository.save(order);
+        cartItemRepository.deleteAll(cart.getItems());
+        return orderMapper.toDto(order);
+    }
 }

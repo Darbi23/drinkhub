@@ -38,7 +38,7 @@ public class SecurityConfig {
                                 .requestMatchers("/orders/**").hasAnyRole("USER", "ADMIN")
                                 .requestMatchers("/cart/**").hasAnyRole("USER", "ADMIN")
                                 .requestMatchers("/products/**").hasAnyRole("USER", "ADMIN")
-                                .anyRequest().authenticated()  // Require authentication for any other request
+                                .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

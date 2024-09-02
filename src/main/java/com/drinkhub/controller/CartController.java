@@ -2,6 +2,7 @@ package com.drinkhub.controller;
 
 import com.drinkhub.model.dto.CartDto;
 import com.drinkhub.model.dto.CartItemDto;
+import com.drinkhub.model.dto.OrderDto;
 import com.drinkhub.model.entity.CartItem;
 import com.drinkhub.service.CartService;
 import com.drinkhub.utils.CurrentUser;
@@ -42,6 +43,11 @@ public class CartController {
     @DeleteMapping("/remove/{productId}")
     public CartDto removeItemFromCart(@RequestParam Long userId, @PathVariable Long productId) {
         return cartService.removeItemFromCart(userId, productId);
+    }
+
+    @PostMapping("/checkout/{userId}")
+    public OrderDto checkout(@PathVariable Long userId) {
+        return cartService.checkout(userId);
     }
 
 }

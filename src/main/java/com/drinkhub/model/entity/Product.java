@@ -25,8 +25,8 @@ public class Product {
     private String category;
     private Integer stock;
 
-    @OneToMany(mappedBy = "product")
-    private List<Review> reviews;
+//    @OneToMany(mappedBy = "product")
+//    private List<Review> reviews;
 
     @OneToMany(mappedBy = "product")
     private List<CartItem> cartItems;

@@ -18,6 +18,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public List<OrderDto> getAllOrders(@RequestParam(required = false) Long userId) {
         return orderService.getAllOrders(userId);
     }
